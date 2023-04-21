@@ -6,35 +6,60 @@ from . models import *
 from . serializers import *
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import BasicAuthentication,TokenAuthentication
+from rest_framework import status
+from django.urls import reverse
 
-def home(request):
-    return HttpResponse("Hello world")
-
-@api_view(['POST'])
-def set_barcode(request):
-    barcode_data = request.data.get('barcode')
-    
-    return Response({'status': 'success'}, status=status.HTTP_200_OK)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
-# class GetBarcode(APIView):
-#     permission_classes = [IsAuthenticated]
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
-#     def get(self, request, pk):
-#         item = Store.objects.filter(pk=str(pk))
-#         serializer = StoreSerializer(item, many=False)
-#         return Response(serializer.data)
-     
-   
-class GetItems(APIView):
+from rest_framework_simplejwt.tokens import RefreshToken
+
+@api_view(['GET'])
+def SmartCart_API(request):
+    endpoints = {
+        'store_data': 'api/items/',
+        'set_barcode': 'api/setBarcode',
+        'token': 'api/token/',
+    }
+    return Response(endpoints)
+
+class storeData(APIView):
     permission_classes = [IsAuthenticated]
+    
+    def get(self,request):
+        items=Store.objects.all();
+        serializer=StoreSerializer(items,many=True)
+        return Response(serializer.data)
 
-    def get(self, request, barcode_id=None):
-        if barcode_id:
-            item = get_object_or_404(Store, barcode_id=barcode_id)
-            serializer = StoreSerializer(item)
-            return Response(serializer.data)
+class setBarcode(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    def post(self, request):
+        
+        serializer = BarcodeSerializer(data=request.data)
+        if serializer.is_valid():
+            barcode_id = serializer.validated_data.get('barcode_id')
+            try:
+                item = Store.objects.get(pk=str(barcode_id))
+                serializer=StoreSerializer(item)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Store.DoesNotExist:
+                return Response({'error': 'item not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            items = Store.objects.all()
-            serializer = StoreSerializer(items, many=True)
-            return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TokenView(APIView):
+    def post(self, request):
+        serializer = TokenObtainPairSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        tokens = serializer.validated_data
+        refresh_token = RefreshToken(tokens['refresh'])
+        access_token = tokens['access']
+        return Response({
+            'access': str(access_token),
+            'refresh': str(tokens['refresh']),
+        })
