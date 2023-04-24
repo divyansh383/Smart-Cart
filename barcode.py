@@ -22,7 +22,7 @@ while True:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         barcode_data = barcode.data.decode("utf-8")
         print("data:", barcode_data)
-        response = requests.post('http://172.16.6.150:8000/getBarcode', {'productID': str(barcode_data)})
+        response = requests.post('http://172.16.6.150:8000/api/setBarcode/', {'productID': str(barcode_data)})
         if response.status_code == 200:
             # Blink green LED
             GPIO.output(green_pin, GPIO.HIGH)

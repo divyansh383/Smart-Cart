@@ -5,15 +5,13 @@ from rest_framework import status
 from . models import *
 from . serializers import *
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser,IsAuthenticatedOrReadOnly
 from rest_framework.authentication import BasicAuthentication,TokenAuthentication
 from rest_framework import status
 from django.urls import reverse
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -28,18 +26,18 @@ def SmartCart_API(request):
     return Response(endpoints)
 
 class storeData(APIView):
-    permission_classes = [IsAuthenticated]
-    
+    permission_classes = [IsAuthenticated|IsAdminUser|IsAuthenticatedOrReadOnly]
+
+    #authentication_classes=[JWTAuthentication]
     def get(self,request):
         items=Store.objects.all();
         serializer=StoreSerializer(items,many=True)
         return Response(serializer.data)
 
 class setBarcode(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes=[JWTAuthentication]
+    #permission_classes = [IsAuthenticated]
+    #authentication_classes=[JWTAuthentication]
     def post(self, request):
-        
         serializer = BarcodeSerializer(data=request.data)
         if serializer.is_valid():
             barcode_id = serializer.validated_data.get('barcode_id')
