@@ -13,3 +13,15 @@ class StoreSerializer(serializers.ModelSerializer):
 
 class BarcodeSerializer(serializers.Serializer):
     barcode_id = serializers.CharField(required=True)
+
+class CartSerializer(serializers.ModelSerializer):
+    item = StoreSerializer()
+
+    class Meta:
+        model = Cart
+        fields = '__all__'
+
+
+class AddToCartSerializer(serializers.Serializer):
+    barcode_id = serializers.CharField(required=True)
+
