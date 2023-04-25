@@ -135,3 +135,5 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+ALLOWED_HOSTS=['localhost','172.16.6.192','172.16.6.180']

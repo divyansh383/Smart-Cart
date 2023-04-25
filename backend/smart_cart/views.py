@@ -41,17 +41,33 @@ class setBarcode(APIView):
     # permission_classes = [IsAuthenticated]
     # authentication_classes=[JWTAuthentication]
     def post(self, request):
-        
         serializer = BarcodeSerializer(data=request.data)
         if serializer.is_valid():
             barcode_id = serializer.validated_data.get('barcode_id')
             try:
                 item = Store.objects.get(pk=str(barcode_id))
-                serializer=StoreSerializer(item)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                serializer = StoreSerializer(item)
+                print("barcode -------------", barcode_id)
+
+                cart_item, created = Cart.objects.get_or_create(item=item)
+                if created:
+                    cart_item.quantity = 1
+                    cart_item.save()
+                    cart_serializer = CartSerializer(cart_item)
+                    response_data = {
+                        'item_details': serializer.data,
+                    }
+                    return Response(response_data, status=status.HTTP_200_OK)
+                else:
+                    response_data = {
+                        'item_details': 'Item already scanned',
+                    }
+                    return Response(response_data, status=status.HTTP_200_OK)
             except Store.DoesNotExist:
+                print('Item does not exit in store')
                 return Response({'error': 'item not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
+            print("serializer is not valid")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TokenView(APIView):
@@ -66,6 +82,8 @@ class TokenView(APIView):
             'refresh': str(tokens['refresh']),
         })
 
+
+#------------------------------------------------------------------------------
 @api_view(['POST'])
 # @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
