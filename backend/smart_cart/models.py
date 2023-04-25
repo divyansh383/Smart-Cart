@@ -56,3 +56,13 @@ class Store(models.Model):
 
     def __str__(self):
         return self.item_name
+
+class Cart(models.Model):
+    item = models.ForeignKey(Store, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.item.item_name} ({self.quantity})"
+
+    class Meta:
+        ordering = ['item__item_name']
