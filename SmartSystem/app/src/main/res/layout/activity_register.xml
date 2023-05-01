@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterActivity">
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/smartcartlogo"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        android:layout_width="220dp"
+        android:layout_height="500dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/shape_right_panel"
+        tools:ignore="MissingConstraints" />
+
+    <LinearLayout
+        android:id="@+id/llLoginPanel"
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="60dp"
+        android:paddingTop="50dp"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:orientation="vertical"
+        android:background="@drawable/shape_login_panel"
+        app:layout_constraintTop_toBottomOf="@id/header">
+        <EditText
+            android:hint="Username"
+            android:drawableRight="@drawable/baseline_person_24"
+            android:layout_width="match_parent"
+            android:textSize="14dp"
+            android:layout_height="60dp" />
+        <EditText
+            android:hint="Email"
+            android:drawableRight="@drawable/baseline_email_24"
+            android:layout_width="match_parent"
+            android:textSize="14dp"
+            android:layout_height="60dp" />
+        <EditText
+            android:hint="Password"
+            android:drawableRight="@drawable/baseline_lock_24"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:textSize="14dp"
+            android:layout_height="60dp" />
+        <EditText
+            android:hint="Confirm Password"
+            android:drawableRight="@drawable/baseline_lock_24"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:textSize="14dp"
+            android:layout_height="60dp" />
+
+    </LinearLayout>
+    <Button
+        android:text="Sign Up"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/llLoginPanel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="150dp"
+        android:layout_height="0dp"
+        android:textColor="@color/white"
+        android:background="@drawable/shape_login_button"
+        tools:ignore="MissingConstraints" />
+    <TextView
+        android:id="@+id/tvLogin"
+        android:textSize="20sp"
+        android:layout_marginLeft="82dp"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toTopOf="@id/llLoginPanel"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login" />
+    <TextView
+        android:textSize="20sp"
+        android:gravity="right"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="82dp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="@+id/llLoginPanel"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign Up" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
