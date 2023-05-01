@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import *
+from . import views
 
 urlpatterns = [
-    path('api/', SmartCart_API),
-    path('api/items/', storeData.as_view(), name='store-data'),
-    path('api/setBarcode/', setBarcode.as_view(), name='set-barcode'),
-    path('api/add_to_cart/', add_to_cart, name='add_to_cart'),
-    path('api/token/', TokenView.as_view(), name='token-obtain-pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', views.SmartCart_API),
+    path('api/items/', views.storeData.as_view(), name='store-data'),
+    path('api/setBarcode/', views.setBarcode.as_view(), name='set-barcode'),
+    path('api/token/', views.TokenView.as_view(), name='token-obtain-pair'),
+    path('api/token/refresh/', views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/verifyUser/',views.userDataView.as_view()),
+    path('api/createUser/',views.createUserView.as_view())
 ]

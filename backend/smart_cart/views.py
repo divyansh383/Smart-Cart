@@ -1,19 +1,20 @@
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
-from rest_framework.response import Response
-from rest_framework import status
+
 from . models import *
 from . serializers import *
+
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated,IsAdminUser,IsAuthenticatedOrReadOnly
 from rest_framework.authentication import BasicAuthentication,TokenAuthentication
 from rest_framework import status
-from django.urls import reverse
+from rest_framework import generics
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import  authentication_classes, permission_classes
 
@@ -26,6 +27,24 @@ def SmartCart_API(request):
         'token': 'api/token/',
     }
     return Response(endpoints)
+class createUserView(generics.CreateAPIView):
+    serializer_class=UserCreateSerializer
+    def post(self, request, *args, **kwargs):
+        serializer=self.serializer_class(data=request.data)
+        if(serializer.is_valid()):
+            serializer.save();
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class userDataView(generics.RetrieveAPIView):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    serializer_class=UserSerializer
+    def get_object(self):
+        return self.request.user
+
 
 class storeData(APIView):
     permission_classes = [IsAuthenticated|IsAdminUser|IsAuthenticatedOrReadOnly]
@@ -37,13 +56,8 @@ class storeData(APIView):
         return Response(serializer.data)
 
 class setBarcode(APIView):
-<<<<<<< HEAD
     #permission_classes = [IsAuthenticated]
     #authentication_classes=[JWTAuthentication]
-=======
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes=[JWTAuthentication]
->>>>>>> origin/avinash
     def post(self, request):
         serializer = BarcodeSerializer(data=request.data)
         if serializer.is_valid():
@@ -88,22 +102,3 @@ class TokenView(APIView):
 
 
 #------------------------------------------------------------------------------
-@api_view(['POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
-def add_to_cart(request):
-    serializer = AddToCartSerializer(data=request.data)
-    if serializer.is_valid():
-        barcode_id = serializer.validated_data['barcode_id']
-        try:
-            store_item = Store.objects.get(pk=barcode_id)
-            cart_item, created = Cart.objects.get_or_create(item=store_item)
-            if not created:
-                cart_item.quantity += 1
-                cart_item.save()
-            serializer = CartSerializer(cart_item)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Store.DoesNotExist:
-            return Response({'error': 'item not found'}, status=status.HTTP_404_NOT_FOUND)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

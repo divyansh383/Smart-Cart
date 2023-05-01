@@ -29,7 +29,7 @@ while True:
             # time.sleep(0.5)
             # GPIO.output(green_pin, GPIO.LOW)
             print("Received at backend")
-            print(response)
+            print(response.text)
         else:
             # Blink red LED
             # GPIO.output(red_pin, GPIO.HIGH)
