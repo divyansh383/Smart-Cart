@@ -37,13 +37,8 @@ class storeData(APIView):
         return Response(serializer.data)
 
 class setBarcode(APIView):
-<<<<<<< HEAD
     #permission_classes = [IsAuthenticated]
     #authentication_classes=[JWTAuthentication]
-=======
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes=[JWTAuthentication]
->>>>>>> origin/avinash
     def post(self, request):
         serializer = BarcodeSerializer(data=request.data)
         if serializer.is_valid():
