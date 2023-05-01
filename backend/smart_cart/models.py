@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.hashers import make_password
 # Create your models here.
 #abu ......to manage user   bsu........to inherit the default user in django
 class UserManager(BaseUserManager):
@@ -9,7 +10,7 @@ class UserManager(BaseUserManager):
             raise ValueError("Email not found!")
         email = self.normalize_email(email)
         user = self.model(email = email, **extra_fields)
-        user.set_password(password)
+        user.password = make_password(password)
         user.save()
         return user
     
@@ -57,12 +58,21 @@ class Store(models.Model):
     def __str__(self):
         return self.item_name
 
+class Cart_User(models.Model):
+    cart_id=models.BigIntegerField();
+    user_id=models.ForeignKey(User,on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return str(self.cart_id)+"--"+str(self.user_id.id)
+
+    class Meta:
+        unique_together = ("cart_id", "user_id")
+
+
 class Cart(models.Model):
     item = models.ForeignKey(Store, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-
     def __str__(self):
-        return f"{self.item.item_name} ({self.quantity})"
+        return f"{self.item.item_name}"
 
     class Meta:
         ordering = ['item__item_name']

@@ -8,5 +8,6 @@ urlpatterns = [
     path('api/token/', views.TokenView.as_view(), name='token-obtain-pair'),
     path('api/token/refresh/', views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api/verifyUser/',views.userDataView.as_view()),
-    path('api/createUser/',views.createUserView.as_view())
+    path('api/createUser/',views.createUserView.as_view()),
+    path('api/assign-user/',views.AssignCart.as_view())
 ]

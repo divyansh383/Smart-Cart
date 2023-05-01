@@ -7,7 +7,7 @@ from . serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated,IsAdminUser,IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated,IsAdminUser,IsAuthenticatedOrReadOnly,AllowAny
 from rest_framework.authentication import BasicAuthentication,TokenAuthentication
 from rest_framework import status
 from rest_framework import generics
@@ -24,18 +24,18 @@ def SmartCart_API(request):
     endpoints = {
         'store_data': 'api/items/',
         'set_barcode': 'api/setBarcode',
-        'token': 'api/token/',
+
+        'access token': 'api/token/',
+        'refresh token': 'api/token/refresh',
+
+
     }
     return Response(endpoints)
+
+
 class createUserView(generics.CreateAPIView):
-    serializer_class=UserCreateSerializer
-    def post(self, request, *args, **kwargs):
-        serializer=self.serializer_class(data=request.data)
-        if(serializer.is_valid()):
-            serializer.save();
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    permission_classes = [AllowAny]
+    serializer_class = UserCreateSerializer
         
 
 class userDataView(generics.RetrieveAPIView):
@@ -69,7 +69,6 @@ class setBarcode(APIView):
 
                 cart_item, created = Cart.objects.get_or_create(item=item)
                 if created:
-                    cart_item.quantity = 1
                     cart_item.save()
                     cart_serializer = CartSerializer(cart_item)
                     response_data = {
@@ -87,6 +86,23 @@ class setBarcode(APIView):
         else:
             print("serializer is not valid")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AssignCart(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    def post(self,request):
+        # uid=int(request.data['user_id']);
+        user=request.user
+        cid=int(request.data['cart_id']);
+        if(Cart_User.objects.filter(cart_id=cid, user_id=user).exists()):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+        assignedCart=Cart_User.objects.create(cart_id=cid,user_id=user);
+        try:
+            assignedCart.save()
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class TokenView(APIView):
     def post(self, request):
