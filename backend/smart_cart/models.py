@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.contrib.auth.hashers import make_password
 # Create your models here.
-#abu ......to manage user   bsu........to inherit the default user in django
+
 class UserManager(BaseUserManager):
 
     def create_user(self, email, password, **extra_fields):

@@ -11,8 +11,8 @@ import requests
 # GPIO.setup(green_pin, GPIO.OUT)
 # GPIO.setup(red_pin, GPIO.OUT)
 #----------------------------------------------
-#cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture("http://172.16.4.147:4747/video")
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture("http://172.16.4.147:4747/video")
 
 while True:
     ret, frame = cap.read()
