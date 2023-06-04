@@ -71,8 +71,9 @@ class Cart_User(models.Model):
 
 class Cart(models.Model):
     item = models.ForeignKey(Store, on_delete=models.CASCADE)
+    cart_id=models.IntegerField(default=None)
     def __str__(self):
-        return f"{self.item.item_name}"
+        return f"{self.item.item_name} : {self.cart_id}"
 
     class Meta:
         ordering = ['item__item_name']

@@ -24,6 +24,7 @@ def SmartCart_API(request):
     endpoints = {
         'store_data': 'api/items/',
         'set_barcode': 'api/setBarcode',
+        'assign cart to user' : 'api/assign-user/',
 
         'access token': 'api/token/',
         'refresh token': 'api/token/refresh',
@@ -103,6 +104,19 @@ class AssignCart(APIView):
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ShowCart(APIView):
+    permission_classes=[IsAuthenticated]
+    authentication_classes=[JWTAuthentication]
+    def get(self,request):
+        user_id=request.user
+        print(user_id);
+        cart_assigned=Cart_User.objects.get(user_id=user_id);
+        print(cart_assigned.cart_id);
+        CartItems=Cart.objects.filter(cart_id=cart_assigned.cart_id)
+        print(CartItems)
+        serializers=CartItemsSerializer(CartItems, many=True);
+        return Response(serializers.data)
 
 class TokenView(APIView):
     def post(self, request):
