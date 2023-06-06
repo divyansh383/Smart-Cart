@@ -63,6 +63,7 @@ class setBarcode(APIView):
         serializer = BarcodeSerializer(data=request.data)
         if serializer.is_valid():
             barcode_id = serializer.validated_data.get('barcode_id')
+            cart_id=serializer.validated_data.get("cart_id")
             try:
                 item = Store.objects.get(pk=str(barcode_id))
                 serializer = StoreSerializer(item)
@@ -71,21 +72,21 @@ class setBarcode(APIView):
                 cart_item, created = Cart.objects.get_or_create(item=item)
                 if created:
                     cart_item.save()
-                    cart_serializer = CartSerializer(cart_item)
-                    response_data = {
-                        'item_details': serializer.data,
-                    }
-                    return Response(response_data, status=status.HTTP_200_OK)
+                    message = 'Item added to cart'
                 else:
-                    response_data = {
-                        'item_details': 'Item already scanned',
-                    }
-                    return Response(response_data, status=status.HTTP_200_OK)
+                    cart_item.delete()
+                    message = 'Item removed from cart'
+
+                response_data = {
+                    #'item_details': serializer.data,
+                    'message': message,
+                }
+                return Response(response_data, status=status.HTTP_200_OK)
             except Store.DoesNotExist:
-                print('Item does not exit in store')
-                return Response({'error': 'item not found'}, status=status.HTTP_404_NOT_FOUND)
+                print('Item does not exist in store')
+                return Response({'error': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            print("serializer is not valid")
+            print("Serializer is not valid")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AssignCart(APIView):

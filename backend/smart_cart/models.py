@@ -53,7 +53,7 @@ class Store(models.Model):
     item_name = models.CharField(max_length=255)
     price = models.IntegerField(max_length=255)
     categories = models.TextField(max_length=255)
-    item_image = models.ImageField(blank=True, upload_to='items', default='/items/default_item.jpg')
+    item_image = models.ImageField(blank=True, upload_to='items', default='/items/default_item.jpeg')
 
     def __str__(self):
         return self.item_name
@@ -71,7 +71,7 @@ class Cart_User(models.Model):
 
 class Cart(models.Model):
     item = models.ForeignKey(Store, on_delete=models.CASCADE)
-    cart_id=models.IntegerField(default=None)
+    cart_id=models.IntegerField(default=1)
     def __str__(self):
         return f"{self.item.item_name} : {self.cart_id}"
 
