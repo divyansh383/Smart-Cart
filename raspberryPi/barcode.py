@@ -11,8 +11,11 @@ import requests
 # GPIO.setup(green_pin, GPIO.OUT)
 # GPIO.setup(red_pin, GPIO.OUT)
 #----------------------------------------------
-#cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture("http://172.16.4.147:4747/video")
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture("http://192.168.1.2:4747/video")
+
+
+cart_id=1
 
 while True:
     ret, frame = cap.read()
@@ -22,14 +25,15 @@ while True:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         barcode_data = barcode.data.decode("utf-8")
         print("data:", barcode_data)
-        response = requests.post('http://172.16.6.192:8000/api/setBarcode/', {'barcode_id': str(barcode_data)})
+        response = requests.post('http://localhost:8000/api/setBarcode/', {'barcode_id': str(barcode_data),'cart_id':cart_id})
         if response.status_code == 200:
             # Blink green LED
             # GPIO.output(green_pin, GPIO.HIGH)
             # time.sleep(0.5)
             # GPIO.output(green_pin, GPIO.LOW)
-            print("Received at backend")
+            print("Received at server")
             print(response.text)
+            time.sleep(5)
         else:
             # Blink red LED
             # GPIO.output(red_pin, GPIO.HIGH)

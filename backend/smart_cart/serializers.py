@@ -41,5 +41,9 @@ class CartUserSerializer(serializers.ModelSerializer):
         model=Cart_User
         fields='__all__'
 
-
+class CartItemsSerializer(serializers.ModelSerializer):
+    item=StoreSerializer()
+    class Meta:
+        model=Cart
+        fields='__all__'
 
